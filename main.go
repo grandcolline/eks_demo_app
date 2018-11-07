@@ -22,10 +22,12 @@ func main() {
 }
 
 func healthHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("--- healthHandler")
 	fmt.Fprint(w, "OK")
 }
 
 func infoHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("--- infoHandler")
 	// インスタンスIDの取得
 	sess := session.Must(session.NewSession())
 	svc := ec2metadata.New(sess)
@@ -58,6 +60,7 @@ func infoHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func fiboHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("--- fiboHandler")
 	n, err := strconv.Atoi(r.URL.Query().Get("n"))
 	if err != nil {
 		fmt.Fprint(w, "ERROR")
@@ -67,6 +70,7 @@ func fiboHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func downHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("--- downHandler")
 	log.Fatal("DOWN!!!")
 }
 
