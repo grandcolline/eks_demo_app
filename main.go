@@ -1,22 +1,23 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws/ec2metadata"
 	"github.com/aws/aws-sdk-go/aws/session"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
-	"encoding/json"
 	"strconv"
 	"strings"
-	"io/ioutil"
 )
 
 func main() {
 	http.HandleFunc("/hc", healthHandler)
 	http.HandleFunc("/info", infoHandler)
 	http.HandleFunc("/fibo", fiboHandler)
+	http.HandleFunc("/down", downHandler)
 	http.ListenAndServe(":8080", nil)
 }
 
@@ -35,17 +36,20 @@ func infoHandler(w http.ResponseWriter, r *http.Request) {
 	// タスクの取得
 	resp, err := http.Get(os.Getenv("ECS_CONTAINER_METADATA_URI"))
 	if err != nil {
-		log.Fatal(err)
+		fmt.Fprint(w, "ERROR")
+		return
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Fprint(w, "ERROR")
+		return
 	}
 	var metadata interface{}
 	err = json.Unmarshal(body, &metadata)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Fprint(w, "ERROR")
+		return
 	}
 	taskArn := metadata.(map[string]interface{})["Labels"].(map[string]interface{})["com.amazonaws.ecs.task-arn"].(string)
 	task := strings.Split(taskArn, "/")[1]
@@ -60,6 +64,10 @@ func fiboHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Fprint(w, strconv.Itoa(n)+"番目のフィボナッチ数は、"+strconv.Itoa(fibo(n)))
+}
+
+func downHandler(w http.ResponseWriter, r *http.Request) {
+	log.Fatal("DOWN!!!")
 }
 
 func fibo(n int) int {

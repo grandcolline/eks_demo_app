@@ -16,4 +16,5 @@ $ docker run --rm -p 80:8080 -it grandcolline/ecs_demo_app
 GET /hc         : ヘルスチェック
 GET /info       : インスタンスIDとローカルIPを返す
 GET /fibo?n=5   : n番目のフィボナッチ数を返す
+GET /down       : アプリケーション終了
 ```
