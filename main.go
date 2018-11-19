@@ -14,6 +14,7 @@ import (
 )
 
 func main() {
+	fmt.Println("=== Application Starting!!")
 	http.HandleFunc("/hc", healthHandler)
 	http.HandleFunc("/info", infoHandler)
 	http.HandleFunc("/fibo", fiboHandler)
