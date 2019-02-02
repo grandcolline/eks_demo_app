@@ -1,5 +1,7 @@
 # ecs_demo_app
 
+ECSの勉強会で使う簡単なアプリケーション(API)
+
 ## Docker Image
 
 [grandcolline/ecs_demo_app](https://hub.docker.com/r/grandcolline/ecs_demo_app/)
