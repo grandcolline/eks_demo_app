@@ -1,16 +1,18 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"github.com/aws/aws-sdk-go/aws/ec2metadata"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 	"strconv"
-	"strings"
+
+	"github.com/aws/aws-sdk-go/aws/ec2metadata"
+	"github.com/aws/aws-sdk-go/aws/session"
+)
+
+// Version 現在のバージョン
+const (
+	Version = "latest"
 )
 
 func main() {
@@ -33,31 +35,9 @@ func infoHandler(w http.ResponseWriter, r *http.Request) {
 	sess := session.Must(session.NewSession())
 	svc := ec2metadata.New(sess)
 	doc, _ := svc.GetInstanceIdentityDocument()
-	instanceId := doc.InstanceID
-	// コンテナIDの取得
-	containerId, _ := os.Hostname()
-	// タスクの取得
-	resp, err := http.Get(os.Getenv("ECS_CONTAINER_METADATA_URI"))
-	if err != nil {
-		fmt.Fprint(w, "ERROR")
-		return
-	}
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		fmt.Fprint(w, "ERROR")
-		return
-	}
-	var metadata interface{}
-	err = json.Unmarshal(body, &metadata)
-	if err != nil {
-		fmt.Fprint(w, "ERROR")
-		return
-	}
-	taskArn := metadata.(map[string]interface{})["Labels"].(map[string]interface{})["com.amazonaws.ecs.task-arn"].(string)
-	task := strings.Split(taskArn, "/")[1]
+	instanceID := doc.InstanceID
 	// レスポンス
-	fmt.Fprint(w, "instanceId: "+instanceId+"\ntask: "+task+"\ncontainerId: "+containerId)
+	fmt.Fprint(w, "version:"+Version+"\ninstanceID: "+instanceID)
 }
 
 func fiboHandler(w http.ResponseWriter, r *http.Request) {
@@ -78,7 +58,6 @@ func downHandler(w http.ResponseWriter, r *http.Request) {
 func fibo(n int) int {
 	if n < 2 {
 		return 1
-	} else {
-		return fibo(n-2) + fibo(n-1)
 	}
+	return fibo(n-2) + fibo(n-1)
 }
