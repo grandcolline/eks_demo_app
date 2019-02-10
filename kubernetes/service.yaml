@@ -1,10 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: eks_demo_app
+  name: eks-demo-app
 spec:
+  type: LoadBalancer
   selector:
-    app: eks_demo_app
+    app: eks-demo-app
   ports:
    -  protocol: TCP
       port: 80

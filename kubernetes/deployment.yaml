@@ -1,15 +1,15 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: eks_demo_app
+  name: eks-demo-app
   labels:
-    app: eks_demo_app
+    app: eks-demo-app
   namespace: default
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: eks_demo_app
+      app: eks-demo-app
   strategy:
     rollingUpdate:
       maxSurge: 25%
@@ -18,12 +18,19 @@ spec:
   template:
     metadata:
       labels:
-        app: eks_demo_app
+        app: eks-demo-app
     spec:
       containers:
       - image: grandcolline/eks_demo_app:latest
         imagePullPolicy: Always
-        name: eks_demo_app
+        name: eks-demo-app
         ports:
         - containerPort: 8080
           protocol: TCP
+          name: api-port
+        livenessProbe:
+          initialDelaySeconds: 5
+          periodSeconds: 1
+          httpGet:
+            path: /hc
+            port: api-port
